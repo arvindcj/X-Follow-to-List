@@ -241,16 +241,16 @@
 
   function formatDuration(ms) {
     const seconds = Math.max(0, Math.ceil(ms / 1000));
-    if (seconds < 60) return `${seconds} 秒`;
-    return `${Math.ceil(seconds / 60)} 分钟`;
+    if (seconds < 60) return `${seconds} sec`;
+    return `${Math.ceil(seconds / 60)} min`;
   }
 
   function jobStatusLabel(status) {
-    return ({ draft: "待开始", running: "导入中", paused: "已暂停", cooldown: "冷却中", completed: "已完成" }[status]) || status || "无任务";
+    return ({ draft: "Not started", running: "Adding accounts", paused: "Paused", cooldown: "Cooling down", completed: "Completed" }[status]) || status || "No task";
   }
 
   function itemStatusLabel(status) {
-    return ({ pending: "待处理", retryable: "等待重试", succeeded: "已加入", already_member: "已在列表", failed: "失败", skipped: "跳过" }[status]) || status;
+    return ({ pending: "Pending", retryable: "Awaiting retry", succeeded: "Added", already_member: "Already in List", failed: "Failed", skipped: "Skipped" }[status]) || status;
   }
 
   function recomputeJobStats(job) {
@@ -266,7 +266,7 @@
     try {
       await globalThis.XListStore.save(state);
     } catch (error) {
-      showToast(`本地保存失败：${error?.message || "storage error"}`);
+      showToast(`Failed to save local data: ${error?.message || "storage error"}`);
     }
   }
 
@@ -291,63 +291,63 @@
       <style>${css}</style>
       <section class="xcurator-panel" hidden aria-label="X Following Curator">
         <header class="xcurator-header">
-          <div><div class="eyebrow">X FOLLOW TO LIST · ${escapeHtml(EXTENSION_VERSION)}</div><h1>把关注列表变成你的清单</h1></div>
-          <div class="header-actions"><button class="clear-capture" data-ref="clearCaptured" data-action="clearCaptured" title="清除本地已捕获账号和勾选状态，不影响导入任务">清除已捕获</button><button class="close" data-action="close" title="关闭">×</button></div>
+          <div><div class="eyebrow">X FOLLOW TO LIST · ${escapeHtml(EXTENSION_VERSION)}</div><h1>Organize your Following into Lists</h1></div>
+          <div class="header-actions"><button class="clear-capture" data-ref="clearCaptured" data-action="clearCaptured" title="Clear locally captured accounts and selections without affecting import tasks">Clear captured</button><button class="close" data-action="close" title="Close">×</button></div>
         </header>
         <div class="xcurator-body">
           <section class="section">
-            <div class="status-line"><span class="dot" data-ref="sessionDot"></span><span data-ref="pageStatus">正在等待 X 页面数据…</span></div>
-            <div class="notice">此扩展使用当前 X 网页会话发起列表操作。X 可能限制或暂停自动化行为；请仅添加你明确选择的账号，并自行承担账号与平台规则风险。</div>
+            <div class="status-line"><span class="dot" data-ref="sessionDot"></span><span data-ref="pageStatus">Waiting for X page data…</span></div>
+            <div class="notice">This extension uses your current X session for list operations. X may rate-limit or restrict automated activity. Only add accounts you explicitly select; you are responsible for account and platform-policy risks.</div>
           </section>
           <section class="section">
-            <div class="section-title"><span>筛选条件</span><span class="muted" data-ref="captureCount">已捕获 0 人</span></div>
+            <div class="section-title"><span>Filters</span><span class="muted" data-ref="captureCount">Captured 0  accounts</span></div>
             <div class="filter-grid">
-              <label class="field"><span>搜索姓名、@用户名、简介或位置</span><input type="text" data-ref="query" placeholder="例如：design / 设计 / @alice"></label>
-              <div class="grid2"><label class="field"><span>包含关键词</span><input type="text" data-ref="include" placeholder="空格分隔"></label><label class="field"><span>排除关键词</span><input type="text" data-ref="exclude" placeholder="空格分隔"></label></div>
-              <label class="field"><span>位置关键词</span><input type="text" data-ref="location" placeholder="例如：Shanghai / Hong Kong"></label>
+              <label class="field"><span>Search name, @handle, bio, or location</span><input type="text" data-ref="query" placeholder="e.g. design / @alice"></label>
+              <div class="grid2"><label class="field"><span>Include keywords</span><input type="text" data-ref="include" placeholder="Space-separated"></label><label class="field"><span>Exclude keywords</span><input type="text" data-ref="exclude" placeholder="Space-separated"></label></div>
+              <label class="field"><span>Location keywords</span><input type="text" data-ref="location" placeholder="e.g. Shanghai / Hong Kong"></label>
               <div class="metric-ranges">
-                <div class="metric-range"><span class="metric-name">粉丝数</span><div class="grid2"><label class="field"><span>最少</span><input type="number" min="0" data-ref="minFollowers" placeholder="不限"></label><label class="field"><span>最多</span><input type="number" min="0" data-ref="maxFollowers" placeholder="不限"></label></div></div>
-                <div class="metric-range"><span class="metric-name">关注数</span><div class="grid2"><label class="field"><span>最少</span><input type="number" min="0" data-ref="minFollowing" placeholder="不限"></label><label class="field"><span>最多</span><input type="number" min="0" data-ref="maxFollowing" placeholder="不限"></label></div></div>
-                <div class="metric-range"><span class="metric-name">发帖数</span><div class="grid2"><label class="field"><span>最少</span><input type="number" min="0" data-ref="minPosts" placeholder="不限"></label><label class="field"><span>最多</span><input type="number" min="0" data-ref="maxPosts" placeholder="不限"></label></div></div>
+                <div class="metric-range"><span class="metric-name">Followers</span><div class="grid2"><label class="field"><span>Minimum</span><input type="number" min="0" data-ref="minFollowers" placeholder="Any"></label><label class="field"><span>Maximum</span><input type="number" min="0" data-ref="maxFollowers" placeholder="Any"></label></div></div>
+                <div class="metric-range"><span class="metric-name">Following</span><div class="grid2"><label class="field"><span>Minimum</span><input type="number" min="0" data-ref="minFollowing" placeholder="Any"></label><label class="field"><span>Maximum</span><input type="number" min="0" data-ref="maxFollowing" placeholder="Any"></label></div></div>
+                <div class="metric-range"><span class="metric-name">Posts</span><div class="grid2"><label class="field"><span>Minimum</span><input type="number" min="0" data-ref="minPosts" placeholder="Any"></label><label class="field"><span>Maximum</span><input type="number" min="0" data-ref="maxPosts" placeholder="Any"></label></div></div>
               </div>
             </div>
-            <div style="margin-top:9px"><label class="relationship-filter"><input type="checkbox" data-ref="mutual"><span class="relationship-mark">↔</span><span>仅互关</span><small>对方也关注你</small></label></div>
-            <div class="filter-apply-row"><button class="filter-reset" data-action="clearFilters">清除条件</button><div class="filter-commit"><span class="match-count" data-ref="matchCount">已匹配 0 人</span><button class="filter-apply" data-action="applyFilters">确定筛选</button></div></div>
+            <div style="margin-top:9px"><label class="relationship-filter"><input type="checkbox" data-ref="mutual"><span class="relationship-mark">↔</span><span>Mutual follows only</span><small>They follow you too</small></label></div>
+            <div class="filter-apply-row"><button class="filter-reset" data-action="clearFilters">Clear filters</button><div class="filter-commit"><span class="match-count" data-ref="matchCount">Matched 0  accounts</span><button class="filter-apply" data-action="applyFilters">Apply filters</button></div></div>
             <div class="selection-panel">
-              <div class="selection-panel-head"><div><span class="panel-kicker">选择结果</span><strong data-ref="selectionCount">已选 0 人</strong></div><span class="selection-scope" data-ref="selectionScope">当前结果 0 人</span></div>
-              <div class="selection-actions"><button data-ref="selectFiltered" data-action="selectFiltered">全选当前结果</button><button data-action="invertSelection">反选当前结果</button><button data-ref="clearSelection" data-action="clearSelection">清空已选</button><button class="selection-export" data-action="exportCsv">导出已选 CSV</button></div>
+              <div class="selection-panel-head"><div><span class="panel-kicker">Select results</span><strong data-ref="selectionCount">Selected 0  accounts</strong></div><span class="selection-scope" data-ref="selectionScope">Current results 0  accounts</span></div>
+              <div class="selection-actions"><button data-ref="selectFiltered" data-action="selectFiltered">Select all results</button><button data-action="invertSelection">Invert selection</button><button data-ref="clearSelection" data-action="clearSelection">Clear selection</button><button class="selection-export" data-action="exportCsv">Export selected CSV</button></div>
             </div>
-            <div class="list-viewport" data-ref="listViewport"><div class="empty">打开自己的 Following 页面并滚动，扩展会在本地收集可见用户。</div></div>
-            <div class="selection-hint">继续滚动 Following 页面可以捕获更多账号；数据只保存在本地。</div>
+            <div class="list-viewport" data-ref="listViewport"><div class="empty">Open your Following page and scroll to capture visible accounts locally.</div></div>
+            <div class="selection-hint">Keep scrolling your Following page to capture more accounts. Data stays on your device.</div>
           </section>
           <section class="section">
-            <div class="section-title"><span>导入到列表</span><span><button data-action="importSnapshot">导入快照</button></span></div>
-            <label class="field"><span>列表分享链接</span><input type="text" data-ref="listUrl" placeholder="https://x.com/i/lists/1234567890"></label>
-            <details><summary>节奏与恢复设置</summary><div class="advanced">
-              <div class="grid2"><label class="field"><span>两次操作间隔（秒）</span><div class="grid2"><input type="number" min="1" max="60" step="0.1" data-ref="betweenMin"><input type="number" min="1" max="120" step="0.1" data-ref="betweenMax"></div></label><label class="field"><span>每批账号数</span><input type="number" min="1" max="500" data-ref="batchSize"></label></div>
-              <div class="grid3"><label class="field"><span>批次暂停最短（分钟）</span><input type="number" min="0.1" max="60" step="0.1" data-ref="pauseMin"></label><label class="field"><span>批次暂停最长（分钟）</span><input type="number" min="0.1" max="120" step="0.1" data-ref="pauseMax"></label><label class="field"><span>单项最多重试</span><input type="number" min="1" max="5" data-ref="maxAttempts"></label></div>
+            <div class="section-title"><span>Add to List</span><span><button data-action="importSnapshot">Import snapshot</button></span></div>
+            <label class="field"><span>List share URL</span><input type="text" data-ref="listUrl" placeholder="https://x.com/i/lists/1234567890"></label>
+            <details><summary>Timing and recovery settings</summary><div class="advanced">
+              <div class="grid2"><label class="field"><span>Delay between actions (seconds)</span><div class="grid2"><input type="number" min="1" max="60" step="0.1" data-ref="betweenMin"><input type="number" min="1" max="120" step="0.1" data-ref="betweenMax"></div></label><label class="field"><span>Accounts per batch</span><input type="number" min="1" max="500" data-ref="batchSize"></label></div>
+              <div class="grid3"><label class="field"><span>Minimum batch pause (minutes)</span><input type="number" min="0.1" max="60" step="0.1" data-ref="pauseMin"></label><label class="field"><span>Maximum batch pause (minutes)</span><input type="number" min="0.1" max="120" step="0.1" data-ref="pauseMax"></label><label class="field"><span>Maximum retries per account</span><input type="number" min="1" max="5" data-ref="maxAttempts"></label></div>
             </div></details>
-            <label class="check" style="margin-top:10px"><input type="checkbox" data-ref="ackRisk"> 我已确认这是对当前 X 会话的批量列表操作 <span class="risk-inline">（可能触发 X 限流或账号限制）</span></label>
-            <div class="selection-hint" data-ref="confirmSummary">目标列表：未设置 · 待导入：0 人</div>
-            <button class="primary" data-ref="start" data-action="start">导入到列表</button>
+            <label class="check" style="margin-top:10px"><input type="checkbox" data-ref="ackRisk"> I understand this will perform bulk List operations using my current X session <span class="risk-inline">（X may impose rate limits or account restrictions）</span></label>
+            <div class="selection-hint" data-ref="confirmSummary">Target List: not set · To add: 0  accounts</div>
+            <button class="primary" data-ref="start" data-action="start">Add to List</button>
             <div class="job-card" data-ref="jobCard" hidden>
-              <div class="job-head"><span data-ref="jobStatus">无任务</span><span data-ref="jobProgressText">0 / 0</span></div>
+              <div class="job-head"><span data-ref="jobStatus">No task</span><span data-ref="jobProgressText">0 / 0</span></div>
               <div class="progress-track"><div class="progress-fill" data-ref="progressFill"></div></div>
-              <div class="job-meta"><span data-ref="jobMeta">等待开始</span><span data-ref="cooldownText"></span></div>
+              <div class="job-meta"><span data-ref="jobMeta">Ready to start</span><span data-ref="cooldownText"></span></div>
               <div class="job-action-groups">
                 <div class="job-action-group flow">
-                  <div class="job-action-group-label">流程控制</div>
-                  <div class="job-action-grid"><button data-ref="resume" data-action="resume">继续</button><button class="danger" data-ref="pause" data-action="pause">暂停</button><button data-action="stopJob">停止并保留进度</button><button data-action="archiveJob">结束任务</button></div>
+                  <div class="job-action-group-label">Task controls</div>
+                  <div class="job-action-grid"><button data-ref="resume" data-action="resume">Resume</button><button class="danger" data-ref="pause" data-action="pause">Pause</button><button data-action="stopJob">Stop and save progress</button><button data-action="archiveJob">End task</button></div>
                 </div>
                 <div class="job-action-group export">
-                  <div class="job-action-group-label">导出数据</div>
-                  <div class="job-action-grid"><button data-action="exportJob">导出结果</button><button data-action="exportSnapshot">导出快照</button></div>
+                  <div class="job-action-group-label">Export data</div>
+                  <div class="job-action-grid"><button data-action="exportJob">Export results</button><button data-action="exportSnapshot">Export snapshot</button></div>
                 </div>
               </div>
             </div>
           </section>
           <section class="section" data-ref="historySection" hidden>
-            <div class="section-title"><span>历史任务</span><span><button data-action="importSnapshot">导入快照</button> <span class="muted" data-ref="historyCount">0 个</span></span></div>
+            <div class="section-title"><span>Task history</span><span><button data-action="importSnapshot">Import snapshot</button> <span class="muted" data-ref="historyCount">0  tasks</span></span></div>
             <div class="history-list" data-ref="historyList"></div>
             <input type="file" data-ref="snapshotInput" accept="application/json,.json" hidden>
           </section>
@@ -470,7 +470,7 @@
     if (!refs.matchCount) return;
     const count = filteredUsers(state.filterDraft).length;
     const pending = !sameFilters(state.filterDraft, state.filters);
-    refs.matchCount.textContent = `${pending ? "预览" : "已匹配"} ${formatNumber(count)} 人`;
+    refs.matchCount.textContent = `${pending ? "Preview" : "Matched"} ${formatNumber(count)}  accounts`;
     refs.matchCount.classList.toggle("pending", pending);
   }
 
@@ -479,7 +479,7 @@
     refs.listViewport.scrollTop = 0;
     persistNow();
     render();
-    showToast("已应用筛选条件");
+    showToast("Filters applied");
   }
 
   function clearFilters() {
@@ -488,7 +488,7 @@
     refs.listViewport.scrollTop = 0;
     persistNow();
     render();
-    showToast("已清除全部筛选条件");
+    showToast("All filters cleared");
   }
 
   function renderList() {
@@ -496,7 +496,7 @@
     runtime.filteredUsers = filteredUsers();
     const users = runtime.filteredUsers;
     if (!users.length) {
-      refs.listViewport.innerHTML = `<div class="empty">${state.users.length ? "没有符合当前筛选条件的用户。" : "打开自己的 Following 页面并滚动，扩展会在本地收集可见用户。"}</div>`;
+      refs.listViewport.innerHTML = `<div class="empty">${state.users.length ? "No accounts match the current filters." : "Open your Following page and scroll to capture visible accounts locally."}</div>`;
       return;
     }
     const scrollTop = refs.listViewport.scrollTop;
@@ -505,7 +505,7 @@
     const checked = selectedSet();
     const rows = users.slice(start, end).map((user) => {
       const avatar = user.avatar ? `<img class="avatar" loading="lazy" referrerpolicy="no-referrer" src="${escapeHtml(user.avatar)}" alt="">` : `<div class="avatar"></div>`;
-      return `<label class="list-row"><input class="row-check" type="checkbox" data-user-id="${escapeHtml(user.id)}" ${checked.has(user.id) ? "checked" : ""}><span>${avatar}</span><span class="user-main"><span class="user-name"><strong>${escapeHtml(user.name || user.handle)}</strong>${user.verified ? '<span class="badge">●</span>' : ''}</span><span class="handle">@${escapeHtml(user.handle)}</span><span class="bio">${escapeHtml(user.bio || "暂无简介")}</span><span class="metrics">粉丝 ${formatNumber(user.followers)} · 关注 ${formatNumber(user.following)} · 发帖 ${formatNumber(user.posts)}${user.location ? ` · ${escapeHtml(user.location)}` : ""}${user.mutual ? " · 互关" : ""}</span></span></label>`;
+      return `<label class="list-row"><input class="row-check" type="checkbox" data-user-id="${escapeHtml(user.id)}" ${checked.has(user.id) ? "checked" : ""}><span>${avatar}</span><span class="user-main"><span class="user-name"><strong>${escapeHtml(user.name || user.handle)}</strong>${user.verified ? '<span class="badge">●</span>' : ''}</span><span class="handle">@${escapeHtml(user.handle)}</span><span class="bio">${escapeHtml(user.bio || "No bio")}</span><span class="metrics">Followers ${formatNumber(user.followers)} · Following ${formatNumber(user.following)} · Posts ${formatNumber(user.posts)}${user.location ? ` · ${escapeHtml(user.location)}` : ""}${user.mutual ? " · Mutual" : ""}</span></span></label>`;
     }).join("");
     const top = start * ROW_HEIGHT;
     const bottom = Math.max(0, (users.length - end) * ROW_HEIGHT);
@@ -523,31 +523,31 @@
 
   function renderSelection() {
     const visibleSelected = runtime.filteredUsers.filter((user) => state.selectedIds.includes(user.id)).length;
-    refs.selectionCount.textContent = `已选 ${formatNumber(state.selectedIds.length)} 人`;
-    refs.selectionScope.textContent = `当前结果 ${formatNumber(runtime.filteredUsers.length)} 人`;
-    refs.captureCount.textContent = `已捕获 ${formatNumber(state.users.length)} 人`;
+    refs.selectionCount.textContent = `Selected ${formatNumber(state.selectedIds.length)}  accounts`;
+    refs.selectionScope.textContent = `Current results ${formatNumber(runtime.filteredUsers.length)}  accounts`;
+    refs.captureCount.textContent = `Captured ${formatNumber(state.users.length)}  accounts`;
     refs.clearCaptured.disabled = state.users.length === 0;
     refs.selectFiltered.disabled = false;
     refs.clearSelection.disabled = state.selectedIds.length === 0;
-    refs.selectionCount.title = `当前筛选结果中已选 ${visibleSelected} 人`;
+    refs.selectionCount.title = `Selected in current results ${visibleSelected}  accounts`;
   }
 
   function renderPageStatus() {
     const ready = runtime.sessionReady;
     refs.sessionDot.classList.toggle("ready", ready);
-    if (runtime.storageCorrupt) refs.pageStatus.textContent = "本地状态结构异常，当前仅可查看，已阻止写操作";
-    else if (!isFollowingPage()) refs.pageStatus.textContent = "请打开自己的 Following 页面，再滚动加载用户";
-    else if (ready && runtime.sessionFingerprint) refs.pageStatus.textContent = `已连接当前 X 会话 · ${state.users.length ? "继续滚动可捕获更多" : "等待用户数据"}`;
-    else if (ready) refs.pageStatus.textContent = "已监听页面会话，但还未得到可用于校验的会话指纹";
-    else if (runtime.hookReady) refs.pageStatus.textContent = "已监听页面请求，等待 X 返回关注用户数据…";
-    else refs.pageStatus.textContent = "正在连接 X 页面…";
+    if (runtime.storageCorrupt) refs.pageStatus.textContent = "Local data appears corrupted. Read-only mode is enabled to prevent changes.";
+    else if (!isFollowingPage()) refs.pageStatus.textContent = "Open your own Following page and scroll to load accounts.";
+    else if (ready && runtime.sessionFingerprint) refs.pageStatus.textContent = `Connected to current X session · ${state.users.length ? "Scroll to capture more" : "Waiting for account data"}`;
+    else if (ready) refs.pageStatus.textContent = "X session detected but not yet verified.";
+    else if (runtime.hookReady) refs.pageStatus.textContent = "Watching page requests; waiting for Following data from X…";
+    else refs.pageStatus.textContent = "Connecting to X…";
   }
 
   function renderJob() {
     const job = state.job;
     refs.jobCard.hidden = !job;
     if (!job) {
-      refs.start.textContent = "导入到列表";
+      refs.start.textContent = "Add to List";
       return;
     }
     recomputeJobStats(job);
@@ -556,17 +556,17 @@
     refs.jobProgressText.textContent = `${p.done} / ${p.total}`;
     refs.progressFill.style.width = `${p.percent}%`;
     const current = globalThis.XListJob.firstRunnable(job);
-    refs.jobMeta.textContent = `${p.pending} 人待处理 · ${job.successCount || 0} 成功 · ${job.alreadyCount || 0} 已存在 · ${job.failureCount || 0} 失败${current ? ` · 下一位 @${escapeHtml(state.users.find((u) => u.id === current.userId)?.handle || current.userId)}` : ""}`;
+    refs.jobMeta.textContent = `${p.pending}  pending · ${job.successCount || 0} Succeeded · ${job.alreadyCount || 0} Already added · ${job.failureCount || 0} Failed${current ? ` · Next @${escapeHtml(state.users.find((u) => u.id === current.userId)?.handle || current.userId)}` : ""}`;
     const batchCooldown = job.status === "cooldown" && job.cooldownReason === "batch";
     const batchWaiting = batchCooldown && job.cooldownUntil > Date.now();
     const platformWaiting = job.status === "cooldown" && job.cooldownReason === "platform" && job.cooldownUntil > Date.now();
-    if (batchWaiting) refs.cooldownText.textContent = `约 ${formatDuration(job.cooldownUntil - Date.now())} 后自动继续`;
-    else if (batchCooldown) refs.cooldownText.textContent = "等待 X 会话连接后自动继续";
-    else if (platformWaiting) refs.cooldownText.textContent = `约 ${formatDuration(job.cooldownUntil - Date.now())} 后可继续`;
-    else refs.cooldownText.textContent = job.status === "completed" ? "队列已完成" : "";
-    refs.start.textContent = job.status === "completed" ? "新建导入任务" : (job.status === "running" ? "导入进行中" : (batchWaiting ? "取消等待，继续任务" : (platformWaiting ? "等待 X 冷却" : "继续上次导入")));
+    if (batchWaiting) refs.cooldownText.textContent = `About  ${formatDuration(job.cooldownUntil - Date.now())}  until automatic resumption`;
+    else if (batchCooldown) refs.cooldownText.textContent = "Will automatically resume when the X session reconnects";
+    else if (platformWaiting) refs.cooldownText.textContent = `About  ${formatDuration(job.cooldownUntil - Date.now())}  before you can resume`;
+    else refs.cooldownText.textContent = job.status === "completed" ? "Queue completed" : "";
+    refs.start.textContent = job.status === "completed" ? "Create new task" : (job.status === "running" ? "Task in progress" : (batchWaiting ? "Cancel delay and resume" : (platformWaiting ? "Waiting for X cooldown" : "Resume previous task")));
     refs.start.disabled = runtime.running || platformWaiting;
-    refs.resume.textContent = batchWaiting ? "取消等待" : "继续";
+    refs.resume.textContent = batchWaiting ? "Cancel delay" : "Resume";
     refs.resume.disabled = runtime.running || job.status === "completed" || platformWaiting;
     refs.pause.disabled = !runtime.running && !["running", "cooldown"].includes(job.status);
   }
@@ -574,19 +574,19 @@
   function renderConfirmation() {
     const parsed = parseListUrl(refs.listUrl.value || state.listUrl);
     const pending = state.job ? globalThis.XListJob.progress(state.job).pending : state.selectedIds.length;
-    refs.confirmSummary.textContent = `目标列表：${parsed ? `${parsed.id}（链接有效）` : "未设置或链接无效"} · 已选择：${state.selectedIds.length} 人 · 待导入：${pending} 人`;
+    refs.confirmSummary.textContent = `Target List: ${parsed ? `${parsed.id}（valid URL）` : "not set or invalid URL"} · Selected: ${state.selectedIds.length}  accounts · To add: ${pending}  accounts`;
   }
 
   function renderHistory() {
     const history = Array.isArray(state.history) ? state.history : [];
     refs.historySection.hidden = history.length === 0;
-    refs.historyCount.textContent = `${history.length} 个`;
+    refs.historyCount.textContent = `${history.length}  tasks`;
     refs.historyList.innerHTML = history.map((job) => {
       recomputeJobStats(job);
       const p = globalThis.XListJob.progress(job);
       const failed = job.queue.filter((item) => item.status === "failed").length;
       const listLabel = escapeHtml(job.listUrl || `list/${job.listId}`);
-      return `<article class="history-item" data-history-id="${escapeHtml(job.id)}"><strong>${jobStatusLabel(job.status)} · ${p.done}/${p.total}</strong><div class="history-meta">${listLabel} · 成功 ${job.successCount || 0} · 已存在 ${job.queue.filter((item) => item.status === "already_member").length} · 失败 ${failed}</div><div class="history-actions"><button data-action="retryHistory" data-history-id="${escapeHtml(job.id)}" ${failed ? "" : "disabled"}>重试失败项</button><button data-action="exportHistory" data-history-id="${escapeHtml(job.id)}">导出</button><button class="danger" data-action="deleteHistory" data-history-id="${escapeHtml(job.id)}">删除</button></div></article>`;
+      return `<article class="history-item" data-history-id="${escapeHtml(job.id)}"><strong>${jobStatusLabel(job.status)} · ${p.done}/${p.total}</strong><div class="history-meta">${listLabel} · Succeeded ${job.successCount || 0} · Already added ${job.queue.filter((item) => item.status === "already_member").length} · Failed ${failed}</div><div class="history-actions"><button data-action="retryHistory" data-history-id="${escapeHtml(job.id)}" ${failed ? "" : "disabled"}>Retry failed items</button><button data-action="exportHistory" data-history-id="${escapeHtml(job.id)}">Export</button><button class="danger" data-action="deleteHistory" data-history-id="${escapeHtml(job.id)}">Delete</button></div></article>`;
     }).join("");
   }
 
@@ -614,8 +614,8 @@
   }
 
   function clearCapturedUsers() {
-    if (!state.users.length) return showToast("当前没有已捕获的账号");
-    if (!window.confirm("清除当前已捕获的账号数据和勾选状态？不会删除正在导入的任务、进度或历史记录。")) return;
+    if (!state.users.length) return showToast("No captured accounts");
+    if (!window.confirm("Clear captured accounts and their selection? This will not delete the active task, progress, or history.")) return;
     state.users = [];
     state.selectedIds = [];
     runtime.filteredUsers = [];
@@ -624,7 +624,7 @@
     persistNow();
     render();
     window.postMessage({ source: SOURCE, kind: "CLEAR_CAPTURED_USERS" }, "*");
-    showToast("已清除已捕获账号。刷新并继续滚动 Following 页面即可重新捕获。");
+    showToast("Captured accounts cleared. Refresh and scroll your Following page to capture them again.");
   }
 
   function selectFiltered() {
@@ -651,7 +651,7 @@
 
   function exportCsv() {
     const chosen = state.users.filter((user) => state.selectedIds.includes(user.id));
-    if (!chosen.length) return showToast("请先选择至少一个用户");
+    if (!chosen.length) return showToast("Select at least one account first");
     const headers = ["USERID", "handle", "name", "bio", "location", "followers", "following", "posts"];
     const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
     const csv = [headers.join(","), ...chosen.map((user) => [user.id, user.handle, user.name, user.bio, user.location, user.followers, user.following, user.posts].map(csvCell).join(","))].join("\n");
@@ -665,7 +665,7 @@
   }
 
   function exportJob() {
-    if (!state.job) return showToast("当前没有导入任务");
+    if (!state.job) return showToast("No import task");
     const users = new Map(state.users.map((user) => [user.id, user]));
     const headers = ["USERID", "handle", "name", "status", "attempts", "http_status", "error_code", "error_path", "response_shape", "duration_ms", "last_error"];
     const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
@@ -693,7 +693,7 @@
   }
 
   function exportSnapshot() {
-    if (!state.job) return showToast("当前没有导入任务");
+    if (!state.job) return showToast("No import task");
     downloadJson(`x-list-job-${state.job.id}.json`, { schemaVersion: state.schemaVersion, exportedAt: Date.now(), job: state.job });
   }
 
@@ -708,8 +708,8 @@
       try {
         const parsed = JSON.parse(String(reader.result || ""));
         const imported = parsed?.job || parsed;
-        if (!imported?.id || !imported?.listId || !Array.isArray(imported.queue) || !imported.queue.length) throw new Error("任务快照结构不完整");
-        if (state.job && !["completed", "stopped"].includes(state.job.status)) throw new Error("请先暂停或归档当前任务");
+        if (!imported?.id || !imported?.listId || !Array.isArray(imported.queue) || !imported.queue.length) throw new Error("Task snapshot is incomplete");
+        if (state.job && !["completed", "stopped"].includes(state.job.status)) throw new Error("Pause or archive the current task first");
         imported.status = "stopped";
         imported.cooldownUntil = 0;
         imported.updatedAt = Date.now();
@@ -718,9 +718,9 @@
         state.listUrl = imported.listUrl || state.listUrl;
         persistNow();
         render();
-        showToast("任务快照已导入，校验通过后可继续");
+        showToast("Task snapshot imported and validated. You may resume.");
       } catch (error) {
-        showToast(`任务快照导入失败：${error?.message || "格式错误"}`);
+        showToast(`Failed to import task snapshot: ${error?.message || "Invalid format"}`);
       }
     };
     reader.readAsText(file);
@@ -732,7 +732,7 @@
   }
 
   function retryHistory(historyId) {
-    if (state.job && state.job.status !== "completed" && state.job.status !== "stopped") return showToast("请先暂停或归档当前任务");
+    if (state.job && state.job.status !== "completed" && state.job.status !== "stopped") return showToast("Pause or archive the current task first");
     const archived = state.history.find((entry) => entry.id === historyId);
     if (!archived) return;
     const copy = JSON.parse(JSON.stringify(archived));
@@ -758,11 +758,11 @@
     state.job = copy;
     persistNow();
     render();
-    showToast("失败项已复制到新任务，点击“继续”开始");
+    showToast("Failed items copied to a new task. Click Resume to start.");
   }
 
   function deleteHistory(historyId) {
-    if (!window.confirm("删除这条历史任务记录？不会影响 X 列表里的已添加成员。")) return;
+    if (!window.confirm("Delete this task from history? Accounts already added to the X List will be unaffected.")) return;
     state.history = state.history.filter((entry) => entry.id !== historyId);
     persistNow();
     render();
@@ -792,7 +792,7 @@
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
         runtime.pendingAdds.delete(requestId);
-        resolve({ ok: false, retryable: true, resultKind: "failed", status: 0, message: "页面请求超时" });
+        resolve({ ok: false, retryable: true, resultKind: "failed", status: 0, message: "Page request timed out" });
       }, 45000);
       runtime.pendingAdds.set(requestId, (result) => { clearTimeout(timeout); resolve(result); });
       window.postMessage({ source: SOURCE, kind: "ADD_MEMBER", requestId, listId, userId }, "*");
@@ -869,7 +869,7 @@
     job.cooldownUntil = 0;
     job.cooldownReason = "";
     await persistNow();
-    showToast("已取消批次等待，正在继续任务");
+    showToast("Batch delay cancelled. Resuming task.");
     runJob();
   }
 
@@ -883,9 +883,9 @@
       renderJob();
       if (job.cooldownReason === "batch") {
         scheduleAutoResume(job);
-        showToast(`批次等待中，约 ${formatDuration(job.cooldownUntil - Date.now())} 后自动继续`);
+        showToast(`Batch delay; about  ${formatDuration(job.cooldownUntil - Date.now())}  until automatic resumption`);
       } else {
-        showToast(`仍在冷却中，约 ${formatDuration(job.cooldownUntil - Date.now())} 后再继续`);
+        showToast(`Still cooling down; about  ${formatDuration(job.cooldownUntil - Date.now())}  before resuming`);
       }
       return;
     }
@@ -924,7 +924,7 @@
           job.cooldownUntil = Date.now() + cooldownFor(result.status);
           job.cooldownReason = "platform";
           await persistNow();
-          showToast(`X 暂停或拒绝了本次操作，${formatDuration(job.cooldownUntil - Date.now())} 后可继续`);
+          showToast(`X paused or rejected this operation; ${formatDuration(job.cooldownUntil - Date.now())}  before you can resume`);
           break;
         } else {
           item.status = "failed";
@@ -943,7 +943,7 @@
           job.cooldownReason = "batch";
           await persistNow();
           scheduleAutoResume(job);
-          showToast(`已处理 ${completed} 人，进入批次暂停`);
+          showToast(`Processed  ${completed}  accounts; starting batch pause`);
           break;
         }
         await persistNow();
@@ -967,20 +967,20 @@
   async function validateJobForResume(job) {
     const parsed = parseListUrl(refs.listUrl.value || job.listUrl);
     if (!parsed || parsed.id !== String(job.listId) || parsed.id !== String(parseListUrl(job.listUrl)?.id || "")) {
-      showToast("目标列表链接与任务不一致，请恢复原链接或先归档任务");
+      showToast("The target List URL does not match this task. Restore the original URL or archive the task.");
       return false;
     }
     if (!runtime.sessionFingerprint) {
-      showToast("尚未取得当前 X 会话指纹，请等待页面请求完成后再继续");
+      showToast("Current X session has not been verified. Wait for the page request before resuming.");
       return false;
     }
     if (job.ownerFingerprint && job.ownerFingerprint !== runtime.sessionFingerprint) {
-      showToast("当前 X 账号与创建任务时不同，已阻止续传");
+      showToast("You're signed into a different X account. Resuming has been blocked.");
       return false;
     }
     const ids = job.queue.map((item) => String(item.userId));
     if (job.queueHash && job.queueHash !== await queueFingerprint(job.listId, ids)) {
-      showToast("任务队列校验失败，已阻止继续以避免错位添加");
+      showToast("Task queue validation failed. Resuming is blocked to prevent incorrect additions.");
       return false;
     }
     return true;
@@ -988,14 +988,14 @@
 
   async function startOrResume() {
     if (runtime.running) return;
-    if (runtime.storageCorrupt) return showToast("本地状态结构异常，已进入只读保护，请导出/清理后再开始");
+    if (runtime.storageCorrupt) return showToast("Local data appears corrupted. Export or clear data before starting again.");
     if (state.job && state.job.status !== "completed") return cancelBatchWaitAndResume();
     const parsed = parseListUrl(refs.listUrl.value);
-    if (!parsed) return showToast("请输入有效的 X 列表分享链接");
-    if (!state.selectedIds.length) return showToast("请先勾选要导入的用户");
-    if (state.selectedIds.length > 5000) return showToast("单个 X 列表最多容纳 5,000 个账号");
-    if (!refs.ackRisk.checked) return showToast("请先确认当前 X 会话的批量操作风险");
-    if (!runtime.sessionFingerprint) return showToast("尚未取得当前 X 会话指纹，请等待页面请求完成后再开始");
+    if (!parsed) return showToast("Enter a valid X List share URL");
+    if (!state.selectedIds.length) return showToast("Select the accounts you want to add first");
+    if (state.selectedIds.length > 5000) return showToast("A single X List supports a maximum of 5,000 accounts");
+    if (!refs.ackRisk.checked) return showToast("Acknowledge the risks of bulk operations on your X session first");
+    if (!runtime.sessionFingerprint) return showToast("Current X session has not been verified. Wait for the page request before starting.");
     state.listUrl = refs.listUrl.value.trim();
     state.settings = currentSettings();
     const queueHash = await queueFingerprint(parsed.id, state.selectedIds);
@@ -1029,13 +1029,13 @@
     state.job.cooldownReason = "";
     persistNow();
     renderJob();
-    showToast("任务已停止，未处理项仍保留，可稍后继续或归档");
+    showToast("Task stopped. Unprocessed items are saved for later resumption or archiving.");
   }
 
   function archiveJob() {
-    if (!state.job) return showToast("当前没有活动任务");
-    if (runtime.running) return showToast("请先暂停任务，再结束任务");
-    if (!window.confirm("结束当前任务？结束后不会自动继续，并会保存在历史任务中。")) return;
+    if (!state.job) return showToast("No active task");
+    if (runtime.running) return showToast("Pause the task before ending it");
+    if (!window.confirm("End the current task? It will not resume automatically and will be saved in history.")) return;
     const archived = JSON.parse(JSON.stringify({ ...state.job, status: state.job.status === "completed" ? "completed" : "stopped" }));
     clearCooldownTimers();
     state.history = [archived, ...(state.history || [])].slice(0, 20);
@@ -1080,7 +1080,7 @@
     try {
       loadState(await globalThis.XListStore.load());
     } catch (error) {
-      showToast(`读取本地状态失败：${error?.message || "storage error"}`);
+      showToast(`Failed to read local data: ${error?.message || "storage error"}`);
     }
     render();
     if (isBatchWaiting(state.job)) scheduleAutoResume(state.job);
